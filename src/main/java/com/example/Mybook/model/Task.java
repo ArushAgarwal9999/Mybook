@@ -32,7 +32,7 @@ public class Task {
     String taskName;
     @Getter
     @Setter
-    String stats;
+    String status;
     @Getter
     @Setter
     Timestamp taskStartTime;

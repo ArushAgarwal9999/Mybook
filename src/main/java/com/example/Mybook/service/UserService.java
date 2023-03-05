@@ -34,6 +34,7 @@ public class UserService {
                     Expert exp = new Expert();
                     exp.setExpId(user.getId());
                     exp.setStatTime(new java.sql.Date(System.currentTimeMillis()));
+                    exp.setAvailable(true);
                     expertRepository.save(exp);
 
                 }

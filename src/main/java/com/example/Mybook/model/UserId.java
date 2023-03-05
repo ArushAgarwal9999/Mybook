@@ -3,7 +3,7 @@ package com.example.Mybook.model;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Customer {
+public class UserId {
     @Getter
     @Setter
     String cusId;

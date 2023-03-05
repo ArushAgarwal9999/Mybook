@@ -1,8 +1,9 @@
 package com.example.Mybook.controller;
 
-import com.example.Mybook.model.Customer;
+import com.example.Mybook.model.UserId;
 import com.example.Mybook.model.Response;
 import com.example.Mybook.model.User;
+import com.example.Mybook.service.ExpertService;
 import com.example.Mybook.service.TaskService;
 import com.example.Mybook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public class MyBookController {
     UserService userService;
     @Autowired
     TaskService taskService;
+    @Autowired
+    ExpertService expertService;
 
 
     @PostMapping("/mybook/login")
@@ -37,10 +40,10 @@ public class MyBookController {
         }
     }
     @PostMapping("/mybook/createTask")
-    public Response createTask(@RequestBody Customer customer)
+    public Response createTask(@RequestBody UserId userId)
     {
         try{
-            return taskService.createTask(customer);
+            return taskService.createTask(userId);
         }
         catch (Exception e)
         {
@@ -51,13 +54,29 @@ public class MyBookController {
             return res;
         }
     }
-    @GetMapping("/mybook/getAllTask/{id}")
-    public Response getAllTask(@PathVariable("id") String id)
+    @GetMapping("/mybook/getAllCustomerTask/{id}")
+    public Response getAllCustomerTask(@PathVariable("id") String id)
     {
         Response res = new Response();
         res.setStatus(SUCCESS_STATUS);
         try {
             res.setResult(Collections.singletonList(taskService.getAllTask(id)));
+            return res;
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return res;
+        }
+    }
+    @GetMapping("/mybook/getAllExpertTask/{id}")
+    public Response getAllExpertTask(@PathVariable("id") String id)
+    {
+        Response res = new Response();
+        res.setStatus(SUCCESS_STATUS);
+        try {
+            res.setResult(Collections.singletonList(expertService.getAllTask(id)));
             return res;
 
         }

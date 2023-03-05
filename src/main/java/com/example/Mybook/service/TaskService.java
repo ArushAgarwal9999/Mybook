@@ -1,6 +1,6 @@
 package com.example.Mybook.service;
 
-import com.example.Mybook.model.Customer;
+import com.example.Mybook.model.UserId;
 import com.example.Mybook.model.Response;
 import com.example.Mybook.model.Task;
 import com.example.Mybook.model.User;
@@ -23,12 +23,12 @@ public class TaskService {
     @Autowired
     UserRepository repository;
 
-    public Response createTask(Customer customer)
+    public Response createTask(UserId userId)
     {
 
 
         Response res = new Response();
-        Optional<User> u = repository.findById(customer.getCusId());
+        Optional<User> u = repository.findById(userId.getCusId());
         if(u.isEmpty())
         {
             res.setStatus(FAILED_STATUS);
@@ -44,7 +44,7 @@ public class TaskService {
 
             t1.setTaskId(task);
             t1.setSubTaskId(1);
-            t1.setStats(WAITING_FOR_EXPERT_STATUS);
+            t1.setStatus(WAITING_FOR_EXPERT_STATUS);
             t1.setTaskName(TASK1);
             java.sql.Timestamp startTime = new Timestamp(System.currentTimeMillis());
             Calendar cal = Calendar.getInstance();
@@ -52,25 +52,25 @@ public class TaskService {
             java.sql.Timestamp endTime = new Timestamp(cal.getTimeInMillis());
             t1.setTaskStartTime(startTime);
             t1.setTaskEndTime(endTime);
-            t1.setCusId(customer.getCusId());
+            t1.setCusId(userId.getCusId());
 
             t2.setTaskId(task);
             t2.setSubTaskId(2);
-            t2.setStats(PENDING_STATUS);
+            t2.setStatus(PENDING_STATUS);
             t2.setTaskName(TASK2);
-            t2.setCusId(customer.getCusId());
+            t2.setCusId(userId.getCusId());
 
             t3.setTaskId(task);
             t3.setSubTaskId(3);
-            t3.setStats(PENDING_STATUS);
+            t3.setStatus(PENDING_STATUS);
             t3.setTaskName(TASK3);
-            t2.setCusId(customer.getCusId());
+            t2.setCusId(userId.getCusId());
 
             t4.setTaskId(task);
             t4.setSubTaskId(4);
-            t4.setStats(PENDING_STATUS);
+            t4.setStatus(PENDING_STATUS);
             t4.setTaskName(TASK4);
-            t4.setCusId(customer.getCusId());
+            t4.setCusId(userId.getCusId());
 
             taskRepository.save(t1);
             taskRepository.save(t2);
@@ -95,7 +95,17 @@ public class TaskService {
         Response res = new Response();
 
         try{
-            return taskRepository.getAllTask(id);
+            List<Task> failedTask = taskRepository.getAllFailedTask(new Timestamp(System.currentTimeMillis()));
+            for(Task task : failedTask)
+            {
+                List<Task> failedSubTask = taskRepository.getAllTask(task.getTaskId());
+                for(Task t: failedSubTask)
+                {
+                    t.setStatus(FAILED_STATUS);
+                }
+                taskRepository.saveAll(failedTask);
+            }
+            return taskRepository.getAllTaskOfCustomer(id);
 
         }
         catch (Exception e)
