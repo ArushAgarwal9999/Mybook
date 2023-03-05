@@ -1,15 +1,10 @@
 package com.example.Mybook.model;
 
-
 import lombok.Getter;
 import lombok.Setter;
 
-public class Responce {
-
+public class Customer {
     @Getter
     @Setter
-    String msg;
-    @Getter
-    @Setter
-    int statusCode;
+    String cusId;
 }
