@@ -6,11 +6,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
 @Entity
+@ToString
 @Table(name="task")
+
 public class Task {
     @Id
     @GeneratedValue

@@ -3,6 +3,7 @@ package com.example.Mybook.service;
 import com.example.Mybook.model.Task;
 import com.example.Mybook.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import static com.example.Mybook.utilities.Constant.WAITING_FOR_EXPERT_STATUS;
 
+@Service
 public class ExpertService {
     @Autowired
     TaskRepository taskRepository;

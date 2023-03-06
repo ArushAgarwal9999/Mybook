@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static com.example.Mybook.utilities.Constant.*;
@@ -95,14 +98,20 @@ public class TaskService {
         Response res = new Response();
 
         try{
-            List<Task> failedTask = taskRepository.getAllFailedTask(new Timestamp(System.currentTimeMillis()));
+            ZonedDateTime utc = ZonedDateTime.now(ZoneOffset.UTC);
+            System.out.println("utc"+utc.toInstant());
+            System.out.println("time -->>"+Timestamp.valueOf(utc.toLocalDateTime()));
+
+            List<Task> failedTask = taskRepository.getAllFailedTask(new Timestamp(utc.toInstant().toEpochMilli()));
             for(Task task : failedTask)
             {
+                System.out.println(task);
                 List<Task> failedSubTask = taskRepository.getAllTask(task.getTaskId());
                 for(Task t: failedSubTask)
                 {
                     t.setStatus(FAILED_STATUS);
                 }
+
                 taskRepository.saveAll(failedTask);
             }
             return taskRepository.getAllTaskOfCustomer(id);

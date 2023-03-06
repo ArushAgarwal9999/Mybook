@@ -3,9 +3,11 @@ package com.example.Mybook.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
+@ToString
 public class Response {
 
     @Getter

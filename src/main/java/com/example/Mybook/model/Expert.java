@@ -5,10 +5,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.sql.Date;
 
 @Entity
+@ToString
 @Table(name="expert")
 public class Expert {
     @Id
