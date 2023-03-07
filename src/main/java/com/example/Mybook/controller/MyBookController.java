@@ -1,5 +1,6 @@
 package com.example.Mybook.controller;
 
+import com.example.Mybook.model.TaskDoneByExpert;
 import com.example.Mybook.model.UserId;
 import com.example.Mybook.model.Response;
 import com.example.Mybook.model.User;
@@ -85,6 +86,33 @@ public class MyBookController {
             e.printStackTrace();
             return res;
         }
+    }
+    @PostMapping("/mybook/TaskDone")
+    public Response markTaskAsDone(TaskDoneByExpert task)
+    {
+
+        try{
+            Response res = new Response();
+            if(expertService.markTask(task))
+            {
+                res.setStatus(SUCCESS_STATUS);
+                res.setMsg("Task mark as Done");
+            }
+            else{
+                res.setStatus(FAILED_STATUS);
+                res.setMsg("Error Occurred while processing the request");
+            }
+            return res;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Response res = new Response();
+            res.setStatus(FAILED_STATUS);
+            res.setMsg("Error Occurred while processing the request");
+            return res;
+        }
+
     }
 
 }

@@ -8,13 +8,9 @@ import com.example.Mybook.repository.TaskRepository;
 import com.example.Mybook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.*;
 
+import static com.example.Mybook.utilities.CommonMethods.*;
 import static com.example.Mybook.utilities.Constant.*;
 
 @Service
@@ -49,12 +45,8 @@ public class TaskService {
             t1.setSubTaskId(1);
             t1.setStatus(WAITING_FOR_EXPERT_STATUS);
             t1.setTaskName(TASK1);
-            java.sql.Timestamp startTime = new Timestamp(System.currentTimeMillis());
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DAY_OF_YEAR, +2);
-            java.sql.Timestamp endTime = new Timestamp(cal.getTimeInMillis());
-            t1.setTaskStartTime(startTime);
-            t1.setTaskEndTime(endTime);
+            t1.setTaskStartTime(getCurrentTime());
+            t1.setTaskEndTime(getEndTime(2));
             t1.setCusId(userId.getCusId());
 
             t2.setTaskId(task);
@@ -95,25 +87,9 @@ public class TaskService {
 
     public List<Task> getAllTask(String id)
     {
-        Response res = new Response();
-
         try{
-            ZonedDateTime utc = ZonedDateTime.now(ZoneOffset.UTC);
-            System.out.println("utc"+utc.toInstant());
-            System.out.println("time -->>"+Timestamp.valueOf(utc.toLocalDateTime()));
 
-            List<Task> failedTask = taskRepository.getAllFailedTask(new Timestamp(utc.toInstant().toEpochMilli()));
-            for(Task task : failedTask)
-            {
-                System.out.println(task);
-                List<Task> failedSubTask = taskRepository.getAllTask(task.getTaskId());
-                for(Task t: failedSubTask)
-                {
-                    t.setStatus(FAILED_STATUS);
-                }
-
-                taskRepository.saveAll(failedTask);
-            }
+            markExpTaskAsFailed();
             return taskRepository.getAllTaskOfCustomer(id);
 
         }
@@ -125,4 +101,26 @@ public class TaskService {
         }
         return new ArrayList<>();
     }
+    public void markExpTaskAsFailed()
+    {
+        try{
+            List<Task> failedTask = taskRepository.getAllFailedTask(getCurrentUTCTime());
+            for(Task task : failedTask)
+            {
+                System.out.println(task);
+                List<Task> failedSubTask = taskRepository.getAllTask(task.getTaskId());
+                for(Task t: failedSubTask)
+                {
+                    if(t.getStatus().equals(PENDING_STATUS))
+                        t.setStatus(FAILED_STATUS);
+                }
+
+                taskRepository.saveAll(failedTask);
+            }
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @ToString
@@ -29,6 +30,12 @@ public class Expert {
     @Getter
     @Setter
     long taskId;
+    @Getter
+    @Setter
+    Timestamp taskStartTime;
+    @Getter
+    @Setter
+    int currTask;
 
 
 
