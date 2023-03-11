@@ -1,5 +1,7 @@
 package com.example.Mybook.utilities;
 
+import java.util.HashMap;
+
 public class Constant {
     public static final String EXPERT = "expert";
     public static final String PENDING_STATUS = "Pending";
@@ -15,4 +17,12 @@ public class Constant {
 
 
     public static final String CUSTOMER = "customer";
+    public static final int expertMaxHour = 8;
+    public static final HashMap<Integer,Integer> taskTimeMap = new HashMap<>();
+    static{
+        taskTimeMap.put(1,2);
+        taskTimeMap.put(2,2);
+        taskTimeMap.put(3,3);
+        taskTimeMap.put(4,1);
+    }
 }

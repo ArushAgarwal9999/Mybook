@@ -12,4 +12,7 @@ public class TaskDoneByExpert {
     @Getter
     @Setter
     int subTaskId;
+    @Setter
+    @Getter
+    String expId;
 }

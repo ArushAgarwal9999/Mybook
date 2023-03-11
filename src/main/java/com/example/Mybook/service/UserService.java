@@ -9,6 +9,7 @@ import com.example.Mybook.utilities.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.Optional;
 
 import static com.example.Mybook.utilities.Constant.FAILED_STATUS;
@@ -20,6 +21,8 @@ public class UserService {
     UserRepository repository;
     @Autowired
     ExpertRepository expertRepository;
+    @Autowired
+    TaskSchedulerService taskSchedulerService;
     public Response loginUser(User user)
     {
         Response res = new Response();
@@ -33,9 +36,10 @@ public class UserService {
                 {
                     Expert exp = new Expert();
                     exp.setExpId(user.getId());
-                    exp.setStatTime(new java.sql.Date(System.currentTimeMillis()));
+                    exp.setStartDate(Date.valueOf("1980-01-01"));
                     exp.setAvailable(true);
                     expertRepository.save(exp);
+                    taskSchedulerService.allocateNewTask();
 
                 }
                 res.setStatus(SUCCESS_STATUS);

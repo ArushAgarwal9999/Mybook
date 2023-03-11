@@ -20,7 +20,7 @@ public class Expert {
     String expId;
     @Getter
     @Setter
-    Date statTime;
+    Date startDate;
     @Getter
     @Setter
     int currentHour;
@@ -30,9 +30,6 @@ public class Expert {
     @Getter
     @Setter
     long taskId;
-    @Getter
-    @Setter
-    Timestamp taskStartTime;
     @Getter
     @Setter
     int currTask;
