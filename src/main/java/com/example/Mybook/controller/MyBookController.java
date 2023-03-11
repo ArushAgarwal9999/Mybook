@@ -26,6 +26,7 @@ public class MyBookController {
 
 
     @PostMapping("/mybook/login")
+    @CrossOrigin()
     public Response loginUser(@RequestBody User user)
     {
         try{
@@ -41,6 +42,7 @@ public class MyBookController {
         }
     }
     @PostMapping("/mybook/createTask")
+    @CrossOrigin()
     public Response createTask(@RequestBody UserId userId)
     {
         try{
@@ -56,6 +58,7 @@ public class MyBookController {
         }
     }
     @GetMapping("/mybook/getAllCustomerTask/{id}")
+    @CrossOrigin()
     public Response getAllCustomerTask(@PathVariable("id") String id)
     {
         Response res = new Response();
@@ -72,6 +75,7 @@ public class MyBookController {
         }
     }
     @GetMapping("/mybook/getAllExpertTask/{id}")
+    @CrossOrigin()
     public Response getAllExpertTask(@PathVariable("id") String id)
     {
         Response res = new Response();
@@ -88,6 +92,7 @@ public class MyBookController {
         }
     }
     @PostMapping("/mybook/TaskDone")
+    @CrossOrigin()
     public Response markTaskAsDone(TaskDoneByExpert task)
     {
 

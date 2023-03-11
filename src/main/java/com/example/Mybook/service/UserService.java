@@ -47,6 +47,7 @@ public class UserService {
             }
             else{
                 User tmp = u.get();
+                System.out.println(tmp);
                 if(!tmp.getType().equals(user.getType()))
                 {
                     res.setStatus(FAILED_STATUS);
