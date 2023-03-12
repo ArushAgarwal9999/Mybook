@@ -15,7 +15,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> getAllTaskOfCustomer(String cusId);
     @Query(value = "SELECT u FROM Task u WHERE u.taskId=?1")
     List<Task> getAllTask(long taskId);
-    @Query(value = "SELECT u FROM Task u WHERE u.taskId=?1 and u.subTaskId=?2")
+    @Query(value = "SELECT u FROM Task u WHERE (u.taskId=?1) and (u.subTaskId=?2)")
     Task getSpecificTask(long taskId, int subTaskId);
     @Query(value = "SELECT u FROM Task u WHERE u.taskEndTime <= ?1")
     List<Task> getAllFailedTask(Timestamp time);

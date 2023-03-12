@@ -125,14 +125,42 @@ public class MyBookController {
             return res;
         }
     }
-    @PostMapping("/mybook/TaskDone")
+    @PostMapping("/mybook/taskDone")
     @CrossOrigin()
-    public Response markTaskAsDone(TaskDoneByExpert task)
+    public Response markTaskAsDone(@RequestBody TaskDoneByExpert task)
     {
 
         try{
             Response res = new Response();
             if(expertService.markTask(task))
+            {
+                res.setStatus(SUCCESS_STATUS);
+                res.setMsg("Task mark as Done");
+            }
+            else{
+                res.setStatus(FAILED_STATUS);
+                res.setMsg("Error Occurred while processing the request");
+            }
+            return res;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Response res = new Response();
+            res.setStatus(FAILED_STATUS);
+            res.setMsg("Error Occurred while processing the request");
+            return res;
+        }
+
+    }
+    @PostMapping("/mybook/takeTask")
+    @CrossOrigin()
+    public Response takeTask(@RequestBody TaskDoneByExpert task)
+    {
+
+        try{
+            Response res = new Response();
+            if(expertService.takeTask(task))
             {
                 res.setStatus(SUCCESS_STATUS);
                 res.setMsg("Task mark as Done");

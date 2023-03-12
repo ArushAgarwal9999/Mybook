@@ -1,6 +1,7 @@
 package com.example.Mybook.service;
 
 import com.example.Mybook.model.Expert;
+import com.example.Mybook.model.Response;
 import com.example.Mybook.model.Task;
 import com.example.Mybook.model.TaskDoneByExpert;
 import com.example.Mybook.repository.ExpertRepository;
@@ -65,9 +66,9 @@ public class ExpertService {
                 if(taskDone.getSubTaskId() != 4)
                 {
                     Task nextTask = taskRepository.getSpecificTask(taskDone.getTaskId(), taskDone.getSubTaskId()+1);
-                    nextTask.setStatus(WAITING_FOR_EXPERT_STATUS);
+                    nextTask.setStatus(RUNNING_STATUS);
                     nextTask.setTaskStartTime(getCurrentTime());
-                    nextTask.setTaskEndTime(getEndTime(2));
+                    nextTask.setTaskEndTime(getEndTime(taskTimeMap.get(nextTask.getSubTaskId())));
                     taskRepository.save(nextTask);
                 }
                 Expert exp = expertRepository.getReferenceById(taskDone.getExpId());
@@ -81,6 +82,31 @@ public class ExpertService {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean takeTask(TaskDoneByExpert task)
+    {
+        try{
+            Task nextTask = taskRepository.getSpecificTask(task.getTaskId(), task.getSubTaskId());
+            nextTask.setStatus(RUNNING_STATUS);
+            nextTask.setTaskStartTime(getCurrentTime());
+            nextTask.setTaskEndTime(getEndTime(taskTimeMap.get(nextTask.getSubTaskId())));
+            taskRepository.save(nextTask);
+            for(Task t1: taskRepository.getAllTask(task.getTaskId()))
+            {
+                if(t1.getExpId() == null)
+                {
+                    t1.setExpId(task.getExpId());
+                    taskRepository.save(t1);
+                }
+            }
+            return true;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
             return false;
         }
     }
