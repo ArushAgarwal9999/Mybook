@@ -92,6 +92,14 @@ public class TaskSchedulerService {
             task.setExpId(expert.getExpId());
             expertRepository.save(expert);
             taskRepository.save(task);
+            for(Task t1: taskRepository.getAllTask(task.getTaskId()))
+            {
+                if(t1.getExpId() == null)
+                {
+                    t1.setExpId(expert.getExpId());
+                    taskRepository.save(t1);
+                }
+            }
 
         }
         catch (Exception e)

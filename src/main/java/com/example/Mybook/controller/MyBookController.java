@@ -91,6 +91,40 @@ public class MyBookController {
             return res;
         }
     }
+    @GetMapping("/mybook/getAllRunningTask/{id}")
+    @CrossOrigin()
+    public Response getAllExpertRunningTask(@PathVariable("id") String id)
+    {
+        Response res = new Response();
+        res.setStatus(SUCCESS_STATUS);
+        try {
+            res.setResult(Collections.singletonList(expertService.getAllRunningTask(id)));
+            return res;
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return res;
+        }
+    }
+    @GetMapping("/mybook/getAllQueueTask/{id}")
+    @CrossOrigin()
+    public Response getAllExpertQueueTask(@PathVariable("id") String id)
+    {
+        Response res = new Response();
+        res.setStatus(SUCCESS_STATUS);
+        try {
+            res.setResult(Collections.singletonList(expertService.getAllqueueTask(id)));
+            return res;
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return res;
+        }
+    }
     @PostMapping("/mybook/TaskDone")
     @CrossOrigin()
     public Response markTaskAsDone(TaskDoneByExpert task)

@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.example.Mybook.utilities.CommonMethods.*;
-import static com.example.Mybook.utilities.Constant.SUCCESS_STATUS;
-import static com.example.Mybook.utilities.Constant.WAITING_FOR_EXPERT_STATUS;
+import static com.example.Mybook.utilities.Constant.*;
 
 @Service
 public class ExpertService {
@@ -27,7 +26,25 @@ public class ExpertService {
     TaskSchedulerService taskSchedulerService;
     public List<Task> getAllTask(String id){
         try{
-            return taskRepository.getAllTaskOfExpert(id,getCurrentUTCTime(),WAITING_FOR_EXPERT_STATUS);
+            return taskRepository.getNewTask(getCurrentUTCTime(),WAITING_FOR_EXPERT_STATUS);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+    public List<Task> getAllRunningTask(String id){
+        try{
+            return taskRepository.getTaskOfExpert(id,getCurrentUTCTime(),RUNNING_STATUS);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+    public List<Task> getAllqueueTask(String id){
+        try{
+            return taskRepository.getTaskOfExpertQueue(id);
         }
         catch (Exception e){
             e.printStackTrace();
