@@ -23,9 +23,6 @@ public class CommonMethods {
     public static Timestamp getCurrentUTCTime()
     {
         ZonedDateTime utc = ZonedDateTime.now(ZoneOffset.UTC);
-        System.out.println("utc"+utc.toInstant());
-        System.out.println("time -->>"+Timestamp.valueOf(utc.toLocalDateTime()));
-        System.out.println("time in method -->>"+new Timestamp(utc.toInstant().toEpochMilli()));
         return Timestamp.valueOf(utc.toLocalDateTime());
     }
     public static Date getCurrentDate()

@@ -68,6 +68,7 @@ public class ExpertService {
                 if(isExpAvailable(taskDone.getExpId()))
                 {
                     exp.setAvailable(true);
+                    expertRepository.save(exp);
                     taskSchedulerService.assignTask();
                 }
 
@@ -82,9 +83,8 @@ public class ExpertService {
     }
     public boolean isExpAvailable(String expId)
     {
-       if(taskRepository.getTaskOfExpert(expId,getCurrentUTCTime(),RUNNING_STATUS).isEmpty())
-           return true;
-       return false;
+        System.out.println("task -->>"+taskRepository.getTaskOfExpert(expId,getCurrentUTCTime(),RUNNING_STATUS));
+        return taskRepository.getTaskOfExpert(expId, getCurrentUTCTime(), RUNNING_STATUS).isEmpty();
     }
     public boolean takeTask(TaskDoneByExpert task)
     {

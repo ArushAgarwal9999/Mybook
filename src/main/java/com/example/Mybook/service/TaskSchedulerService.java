@@ -71,10 +71,13 @@ public class TaskSchedulerService {
     }
     public synchronized void markNextTask(long prevTaskId, int prevSubTaskId )
     {
+
         Task task = taskRepository.getSpecificTask(prevTaskId, prevSubTaskId+1);
         if(task != null)
         {
             task.setStatus(WAITING_FOR_EXECUTION_STATUS);
+            task.setTaskStartTime(getCurrentTime());
+            task.setTaskEndTime(getEndTime(taskTimeMap.get(prevSubTaskId+1)));
             taskRepository.save(task);
         }
 
@@ -89,10 +92,7 @@ public class TaskSchedulerService {
                 if(expert.getCurrentHour() >= expertMaxHour)
                     return false;
                 int expertRemainHour = expertMaxHour - expert.getCurrentHour();
-                if(expertRemainHour< taskTimeMap.get(task.getSubTaskId()) )
-                {
-                    return false;
-                }
+                return expertRemainHour >= taskTimeMap.get(task.getSubTaskId());
             }
 
             return true;
@@ -143,6 +143,9 @@ public class TaskSchedulerService {
                     taskRepository.save(t1);
                 }
             }
+            System.out.println("task after assign -->>"+task);
+            System.out.println("expert after  -->>"+expert);
+            System.out.println("all running taks "+taskRepository.getTaskOfExpert(expert.getExpId(),getCurrentUTCTime(),RUNNING_STATUS));
 
         }
         catch (Exception e)
