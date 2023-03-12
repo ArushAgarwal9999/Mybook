@@ -59,7 +59,7 @@ public class TaskService {
             t3.setSubTaskId(3);
             t3.setStatus(PENDING_STATUS);
             t3.setTaskName(TASK3);
-            t2.setCusId(userId.getCusId());
+            t3.setCusId(userId.getCusId());
 
             t4.setTaskId(task);
             t4.setSubTaskId(4);
