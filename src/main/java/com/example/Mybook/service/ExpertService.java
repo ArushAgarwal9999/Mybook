@@ -1,7 +1,6 @@
 package com.example.Mybook.service;
 
 import com.example.Mybook.model.Expert;
-import com.example.Mybook.model.Response;
 import com.example.Mybook.model.Task;
 import com.example.Mybook.model.TaskDoneByExpert;
 import com.example.Mybook.repository.ExpertRepository;
@@ -9,10 +8,8 @@ import com.example.Mybook.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static com.example.Mybook.utilities.CommonMethods.*;
 import static com.example.Mybook.utilities.Constant.*;
@@ -63,19 +60,16 @@ public class ExpertService {
                 task.setStatus(SUCCESS_STATUS);
                 task.setExpEndTime(getCurrentTime());
                 taskRepository.save(task);
-                if(taskDone.getSubTaskId() != 4)
-                {
-                    Task nextTask = taskRepository.getSpecificTask(taskDone.getTaskId(), taskDone.getSubTaskId()+1);
-                    nextTask.setStatus(RUNNING_STATUS);
-                    nextTask.setTaskStartTime(getCurrentTime());
-                    nextTask.setTaskEndTime(getEndTime(taskTimeMap.get(nextTask.getSubTaskId())));
-                    taskRepository.save(nextTask);
-                }
                 Expert exp = expertRepository.getReferenceById(taskDone.getExpId());
-                exp.setAvailable(true);
+
                 exp.setCurrentHour(getTimeTakenByExpert(task.getExpStartTime(), getCurrentTime()));
                 expertRepository.save(exp);
-                taskSchedulerService.allocateNewTask();
+                taskSchedulerService.markNextTask(taskDone.getTaskId(), taskDone.getSubTaskId());
+                if(isExpAvailable(taskDone.getExpId()))
+                {
+                    exp.setAvailable(true);
+                    taskSchedulerService.assignTask();
+                }
 
 
                 return true;
@@ -86,23 +80,26 @@ public class ExpertService {
             return false;
         }
     }
+    public boolean isExpAvailable(String expId)
+    {
+       if(taskRepository.getTaskOfExpert(expId,getCurrentUTCTime(),RUNNING_STATUS).isEmpty())
+           return true;
+       return false;
+    }
     public boolean takeTask(TaskDoneByExpert task)
     {
         try{
             Task nextTask = taskRepository.getSpecificTask(task.getTaskId(), task.getSubTaskId());
-            nextTask.setStatus(RUNNING_STATUS);
-            nextTask.setTaskStartTime(getCurrentTime());
-            nextTask.setTaskEndTime(getEndTime(taskTimeMap.get(nextTask.getSubTaskId())));
-            taskRepository.save(nextTask);
-            for(Task t1: taskRepository.getAllTask(task.getTaskId()))
+            Expert exp = expertRepository.getReferenceById(task.getExpId());
+            if(nextTask.getExpId() == null && taskSchedulerService.canAssignTask(nextTask,exp))
             {
-                if(t1.getExpId() == null)
-                {
-                    t1.setExpId(task.getExpId());
-                    taskRepository.save(t1);
-                }
+                taskSchedulerService.assignTask(nextTask, exp);
+                return true;
             }
-            return true;
+            else{
+                return false;
+            }
+
         }
         catch (Exception e)
         {

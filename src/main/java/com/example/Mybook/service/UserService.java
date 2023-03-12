@@ -39,7 +39,7 @@ public class UserService {
                     exp.setStartDate(Date.valueOf("1980-01-01"));
                     exp.setAvailable(true);
                     expertRepository.save(exp);
-                    taskSchedulerService.allocateNewTask();
+
 
                 }
                 res.setStatus(SUCCESS_STATUS);
@@ -57,6 +57,10 @@ public class UserService {
                     res.setStatus(SUCCESS_STATUS);
                     res.setMsg("User login Successfully ");
                 }
+            }
+            if(user.getType().equals(Constant.EXPERT))
+            {
+                taskSchedulerService.assignTask();
             }
 
         }

@@ -21,6 +21,8 @@ public class TaskService {
     TaskRepository taskRepository;
     @Autowired
     UserRepository repository;
+    @Autowired
+    TaskSchedulerService taskSchedulerService;
 
     public Response createTask(UserId userId)
     {
@@ -73,6 +75,7 @@ public class TaskService {
             taskRepository.save(t4);
 
             res.setStatus(SUCCESS_STATUS);
+            taskSchedulerService.assignTask();
             res.setMsg("Task create successfully");
         }
         catch (Exception e)

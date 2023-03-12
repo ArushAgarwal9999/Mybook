@@ -7,7 +7,6 @@ import com.example.Mybook.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.util.List;
 
 import static com.example.Mybook.utilities.CommonMethods.*;
@@ -20,29 +19,26 @@ public class TaskSchedulerService {
     @Autowired
     ExpertRepository expertRepository;
 
-    public synchronized void allocateNewTask()
+    public synchronized void allocateNewTask(Expert exp)
     {
 
         try {
 
             List<Task>  newTask = taskRepository.getNewTask(getCurrentUTCTime(),WAITING_FOR_EXPERT_STATUS);
             System.out.println("newTask-->>>"+newTask);
-            List<Expert> freeExpert = expertRepository.getAllFreeExpert();
-            int i = 0;
-            int j = 0;
-            while(i<newTask.size() && j<freeExpert.size())
+            for(Task t:newTask)
             {
-                if(canAssignTask(newTask.get(i), freeExpert.get(j)))
+                if(canAssignTask(t, exp))
                 {
-                    assignTask(newTask.get(i), freeExpert.get(j) );
-                    i++;
-                    j++;
+                    assignTask(t,exp);
+                    return;
                 }
-                else{
-                    j++;
-                }
-
             }
+
+
+
+
+
 
         }
         catch (Exception e)
@@ -54,12 +50,44 @@ public class TaskSchedulerService {
 
 
     }
-    private boolean canAssignTask(Task task, Expert expert)
+    public synchronized  void allocateNextTask(Expert exp)
+    {
+            List<Task> task = taskRepository.getTaskOfExpertWaiting(exp.getExpId());
+            if(task.isEmpty())
+            {
+                allocateNewTask(exp);
+            }
+            else{
+                for(Task t:task)
+                {
+                    if(canAssignTask(t, exp))
+                    {
+                        assignTask(t,exp);
+                        return;
+                    }
+
+                }
+            }
+    }
+    public synchronized void markNextTask(long prevTaskId, int prevSubTaskId )
+    {
+        Task task = taskRepository.getSpecificTask(prevTaskId, prevSubTaskId+1);
+        if(task != null)
+        {
+            task.setStatus(WAITING_FOR_EXECUTION_STATUS);
+            taskRepository.save(task);
+        }
+
+    }
+    public synchronized boolean canAssignTask(Task task, Expert expert)
     {
         try{
-
+            if(task.getExpId() != null && !task.getExpId().equals(expert.getExpId()))
+                return false;
             if(expert.getStartDate().toString().equals(getCurrentDate().toString()))
             {
+                if(expert.getCurrentHour() >= expertMaxHour)
+                    return false;
                 int expertRemainHour = expertMaxHour - expert.getCurrentHour();
                 if(expertRemainHour< taskTimeMap.get(task.getSubTaskId()) )
                 {
@@ -75,7 +103,22 @@ public class TaskSchedulerService {
             return false;
         }
     }
-    private void assignTask(Task task, Expert expert)
+    public synchronized void assignTask()
+    {
+        try{
+            List<Expert> freeExpert = expertRepository.getAllFreeExpert();
+            for(Expert exp :freeExpert)
+            {
+                allocateNextTask(exp);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+
+        }
+
+    }
+    public synchronized void assignTask(Task task, Expert expert)
     {
         try {
             System.out.println("task -->>"+task);

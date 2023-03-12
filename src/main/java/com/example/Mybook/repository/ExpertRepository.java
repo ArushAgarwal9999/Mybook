@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface ExpertRepository extends JpaRepository<Expert, String> {
-    @Query(value = "select u from Expert u where u.isAvailable = true ORDER BY u.startDate DESC")
+    @Query(value = "select u from Expert u where u.isAvailable = true ORDER BY u.startDate ASC")
     List<Expert> getAllFreeExpert();
 }
